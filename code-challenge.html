@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Critical Mass Code Challenge - Evan Lim</title>
+
+
+    <style type="text/css">
+      body {
+        background-color: #FFF;
+        color: #8B8B8B;
+        font-family: 'Helvetica', 'Arial', sans-serif;
+        font-size: 1rem;
+      }
+
+      #navbar {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 130px;
+      }
+
+      #navbar ul {
+        display: flex;
+        flex-direction: row;
+        margin: 0 60px 0;
+        padding: 0;
+      }
+
+      #navbar li {
+        list-style-type: none;
+        margin: 0 30px;
+        padding: 0 0 7px;
+        text-align: center;
+      }
+
+      #navbar li a {
+        color: #8B8B8B;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        text-decoration: none;
+      }
+
+      #navbar li a:hover {
+        color: #1A68BD;
+      }
+
+      #navbar li.selected a {
+        color: #000;
+      }
+
+      #city-navigation-wrapper {
+        position: relative;
+      }
+
+      .city-navigation {
+        border-bottom: 1px solid #D3D3D3;
+        position: relative;
+      }
+
+      #slider {
+        display: none;
+        margin: -1px 0 0;
+        transform: translateX(0);
+        transition: transform 200ms;
+        width: 0;
+      }
+
+      #slider hr {
+        border-top: 1px solid #000;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div id="container">
+      <div id="navbar">
+        <div id="city-navigation-wrapper">
+          <div id="slider"><hr></div>
+        </div>
+      </div>
+    </div>
+
+
+    <script type="text/javascript">
+    
+      const cities = [
+        {
+          "section": "cupertino",
+          "label": "Cupertino"
+        },
+        {
+          "section": "new-york-city",
+          "label": "New York City"
+        },
+        {
+          "section": "london",
+          "label": "London"
+        },
+        {
+          "section": "amsterdam",
+          "label": "Amsterdam"
+        },
+        {
+          "section": "tokyo",
+          "label": "Tokyo"
+        },
+        {
+          "section": "hong-kong",
+          "label": "Hong Kong"
+        },
+        {
+          "section": "sydney",
+          "label": "Sydney"
+        }
+      ]
+    
+
+      let container = document.querySelector('#city-navigation-wrapper');
+      
+      // Insert nav
+      let newNavElement = document.createElement('div');
+      newNavElement.classList.add('city-navigation');
+      let newNav = '<ul>';
+      for ( let i = 0; i < cities.length; i++ ) {
+        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}">${cities[i].label}</button></a>`;
+      }
+      newNav += '</ul>';
+      newNavElement.innerHTML = newNav;
+      container.prepend(newNavElement);
+
+      // Nav item click handlers
+      let navLink = document.querySelectorAll('.city-list-item');
+
+      function toggleClick() {
+        // Unselect all nav items
+        for ( let i = 0; i < navLink.length; i++ ) {
+          if( navLink[i].classList.contains('selected') )
+            navLink[i].classList.remove('selected');
+        }
+        // Select clicked nav item
+        this.classList.toggle('selected');
+
+        // Show slider and update position
+        navSlider.style.display = "block";
+        moveSlider(this.offsetWidth, this.offsetLeft);
+      }
+      
+      // Add click handlers
+      for ( let i = 0; i < navLink.length; i++ ) {
+        navLink[i].addEventListener('click', toggleClick);
+      }
+
+      let navSlider = document.querySelector('#slider');
+
+      function moveSlider(width, offset) {
+        navSlider.style.width = `${width}px`;
+        navSlider.style.transform = `translateX(${offset}px)`;
+      }
+
+      function windowResizeUpdate() {
+        for ( let i = 0; i < navLink.length; i++ ) {
+          if( navLink[i].classList.contains('selected') ) {
+            moveSlider(navLink[i].offsetWidth, navLink[i].offsetLeft);
+          }
+        }
+      }
+
+      let today = new Date();
+      var time = today.getHours() + ":" + today.getMinutes();
+      console.log(time);
+
+      window.onresize = windowResizeUpdate;
+
+    </script>
+
+  </body>
+</html>
