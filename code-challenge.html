@@ -71,6 +71,14 @@
         margin: 0;
         padding: 0;
       }
+
+      .city-time {
+        color: #8B8B8B;
+        font-size: 0.72rem;
+        padding-top: 10px;
+        text-align: center;
+        transition: all 200ms;
+      }
     </style>
 
   </head>
@@ -78,7 +86,10 @@
     <div id="container">
       <div id="navbar">
         <div id="city-navigation-wrapper">
-          <div id="slider"><hr></div>
+          <div id="slider">
+            <hr>
+            <div class="city-time"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -89,63 +100,71 @@
       const cities = [
         {
           "section": "cupertino",
-          "label": "Cupertino"
+          "label": "Cupertino",
+          "utcOffset": -8
         },
         {
           "section": "new-york-city",
-          "label": "New York City"
+          "label": "New York City",
+          "utcOffset" : -5
         },
         {
           "section": "london",
-          "label": "London"
+          "label": "London",
+          "utcOffset": 0
         },
         {
           "section": "amsterdam",
-          "label": "Amsterdam"
+          "label": "Amsterdam",
+          "utcOffset": 1
         },
         {
           "section": "tokyo",
-          "label": "Tokyo"
+          "label": "Tokyo",
+          "utcOffset": 9
         },
         {
           "section": "hong-kong",
-          "label": "Hong Kong"
+          "label": "Hong Kong",
+          "utcOffset": 8
         },
         {
           "section": "sydney",
-          "label": "Sydney"
+          "label": "Sydney",
+          "utcOffset": 11
         }
       ]
     
 
-      let container = document.querySelector('#city-navigation-wrapper');
+      const container = document.querySelector('#city-navigation-wrapper');
       
       // Insert nav
       let newNavElement = document.createElement('div');
       newNavElement.classList.add('city-navigation');
       let newNav = '<ul>';
       for ( let i = 0; i < cities.length; i++ ) {
-        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}">${cities[i].label}</button></a>`;
+        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}" data-utc="${cities[i].utcOffset}">${cities[i].label}</button></a>`;
       }
       newNav += '</ul>';
       newNavElement.innerHTML = newNav;
       container.prepend(newNavElement);
 
       // Nav item click handlers
-      let navLink = document.querySelectorAll('.city-list-item');
+      const navLink = document.querySelectorAll('.city-list-item');
 
       function toggleClick() {
         // Unselect all nav items
         for ( let i = 0; i < navLink.length; i++ ) {
-          if( navLink[i].classList.contains('selected') )
+          if ( navLink[i].classList.contains('selected') )
             navLink[i].classList.remove('selected');
         }
         // Select clicked nav item
         this.classList.toggle('selected');
 
-        // Show slider and update position
+        // Show slider, update position and time
         navSlider.style.display = "block";
         moveSlider(this.offsetWidth, this.offsetLeft);
+        showTime(this.firstChild.dataset.utc);
       }
       
       // Add click handlers
@@ -153,26 +172,40 @@
         navLink[i].addEventListener('click', toggleClick);
       }
 
-      let navSlider = document.querySelector('#slider');
+      const navSlider = document.querySelector('#slider');
 
       function moveSlider(width, offset) {
         navSlider.style.width = `${width}px`;
         navSlider.style.transform = `translateX(${offset}px)`;
       }
 
+      // Move slider on window resize
       function windowResizeUpdate() {
         for ( let i = 0; i < navLink.length; i++ ) {
-          if( navLink[i].classList.contains('selected') ) {
+          if ( navLink[i].classList.contains('selected') ) {
             moveSlider(navLink[i].offsetWidth, navLink[i].offsetLeft);
           }
         }
       }
 
-      let today = new Date();
-      var time = today.getHours() + ":" + today.getMinutes();
-      console.log(time);
-
       window.onresize = windowResizeUpdate;
+
+      // Show current time of selected city
+      function showTime(utcOffset) {
+        let today = new Date();
+        let hours = today.getUTCHours();
+        let minutes = today.getUTCMinutes();
+
+        // Convert to time zone
+        let localHours = (hours % 12) + parseInt(utcOffset);
+
+        // Convert to 12 hour time and show minutes
+        let time = (localHours % 12) + ":" + ( minutes < 10 ? "0" : "" ) + today.getMinutes();
+
+        const cityTime = document.querySelector('.city-time');
+        cityTime.innerHTML = time;
+      }
+      
 
     </script>
 
