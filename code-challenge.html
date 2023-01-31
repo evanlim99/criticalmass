@@ -196,13 +196,13 @@
 
       // Show current time of selected city
       function showTime(utcOffset) {
-        var today = new Date();
+        let today = new Date();
 
         // Get UTC time
-        var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
+        let utc = today.getTime() + (today.getTimezoneOffset() * 60000);
 
         // Convert to time zone
-        var cityDate = new Date(utc + (3600000 * utcOffset));
+        let cityDate = new Date(utc + (3600000 * utcOffset));
 
         // Show hour and minutes only
         cityTime.innerHTML = cityDate.toLocaleString([], {timeStyle: "short"});
