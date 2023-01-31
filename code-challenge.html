@@ -75,9 +75,11 @@
       .city-time {
         color: #8B8B8B;
         font-size: 0.72rem;
+        margin-left: -15%;
         padding-top: 10px;
         text-align: center;
         transition: all 200ms;
+        width: 130%;
       }
     </style>
 
@@ -143,7 +145,7 @@
       newNavElement.classList.add('city-navigation');
       let newNav = '<ul>';
       for ( let i = 0; i < cities.length; i++ ) {
-        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}" data-utc="${cities[i].utcOffset}">${cities[i].label}</button></a>`;
+        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}" data-utc="${cities[i].utcOffset}">${cities[i].label}</a>`;
       }
       newNav += '</ul>';
       newNavElement.innerHTML = newNav;
@@ -190,20 +192,20 @@
 
       window.onresize = windowResizeUpdate;
 
+      const cityTime = document.querySelector('.city-time');
+
       // Show current time of selected city
       function showTime(utcOffset) {
-        let today = new Date();
-        let hours = today.getUTCHours();
-        let minutes = today.getUTCMinutes();
+        var today = new Date();
+
+        // Get UTC time
+        var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
 
         // Convert to time zone
-        let localHours = (hours % 12) + parseInt(utcOffset);
+        var cityDate = new Date(utc + (3600000 * utcOffset));
 
-        // Convert to 12 hour time and show minutes
-        let time = (localHours % 12) + ":" + ( minutes < 10 ? "0" : "" ) + today.getMinutes();
-
-        const cityTime = document.querySelector('.city-time');
-        cityTime.innerHTML = time;
+        // Show hour and minutes only
+        cityTime.innerHTML = cityDate.toLocaleString([], {timeStyle: "short"});
       }
       
 
