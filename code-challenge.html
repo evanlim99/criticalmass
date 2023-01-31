@@ -146,7 +146,7 @@
       newNavElement.classList.add('city-navigation');
       let newNav = '<ul>';
       for ( let i = 0; i < cities.length; i++ ) {
-        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}" data-utc="${cities[i].utcOffset}">${cities[i].label}</a>`;
+        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}" data-utc="${cities[i].utcOffset}">${cities[i].label}</a></li>`;
       }
       newNav += '</ul>';
       newNavElement.innerHTML = newNav;
