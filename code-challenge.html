@@ -98,7 +98,7 @@
         <div id="city-navigation-wrapper">
           <div id="slider">
             <hr>
-            <div class="city-time"></div>
+            <div class="city-time" aria-label="" aria-live="polite"></div>
           </div>
         </div>
       </div>
@@ -153,7 +153,7 @@
       newNavElement.classList.add('city-navigation');
       let newNav = '<ul>';
       for ( let i = 0; i < cities.length; i++ ) {
-        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}" data-utc="${cities[i].utcOffset}">${cities[i].label}</a></li>`;
+        newNav += `<li class='city-list-item'><a href="#" id="${cities[i].section}" data-utc="${cities[i].utcOffset}" data-city="${cities[i].label}">${cities[i].label}</a></li>`;
       }
       newNav += '</ul>';
       newNavElement.innerHTML = newNav;
@@ -174,7 +174,7 @@
         // Show slider, update position and time
         navSlider.style.display = "block";
         moveSlider(this.offsetWidth, this.offsetLeft);
-        showTime(this.firstChild.dataset.utc);
+        showTime(this.firstChild.dataset.utc, this.firstChild.dataset.city);
       }
       
       // Add click handlers
@@ -203,7 +203,7 @@
       const cityTime = document.querySelector('.city-time');
 
       // Show current time of selected city
-      function showTime(utcOffset) {
+      function showTime(utcOffset, cityName) {
         let today = new Date();
 
         // Get UTC time
@@ -214,6 +214,7 @@
 
         // Show hour and minutes only
         cityTime.innerHTML = cityDate.toLocaleString([], {timeStyle: "short"});
+        cityTime.setAttribute("aria-label", `${cityName} local time`);
       }
       
 
