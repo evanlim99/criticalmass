@@ -104,7 +104,7 @@
     </div>
 
 
-    <script type="text/javascript">
+    <script>
     
       const cities = [
         {
@@ -171,7 +171,7 @@
         this.classList.toggle('selected');
 
         // Show slider, update position and time
-        navSlider.style.display = "block";
+        navSlider.style.display = 'block';
         moveSlider(this.offsetWidth, this.offsetLeft);
         showTime(this.firstChild.dataset.utc, this.firstChild.dataset.city);
       }
@@ -182,6 +182,10 @@
       }
 
       const navSlider = document.querySelector('#slider');
+
+      // Initially position slider in middle so it appears to slide out from middle
+      let containerMiddle = container.offsetWidth/2;
+      navSlider.style.transform = `translateX(${containerMiddle}px)`;
 
       function moveSlider(width, offset) {
         navSlider.style.width = `${width}px`;
@@ -205,15 +209,15 @@
       function showTime(utcOffset, cityName) {
         let today = new Date();
 
-        // Get UTC time
+        // Get UTC time by adding local time and local timezone offset(converted to ms)
         let utc = today.getTime() + (today.getTimezoneOffset() * 60000);
 
         // Convert to time zone
         let cityDate = new Date(utc + (3600000 * utcOffset));
 
         // Show hour and minutes only
-        cityTime.innerHTML = cityDate.toLocaleString([], {timeStyle: "short"});
-        cityTime.setAttribute("aria-label", `${cityName} local time`);
+        cityTime.innerHTML = cityDate.toLocaleString([], {timeStyle: 'short'});
+        cityTime.setAttribute('aria-label', `${cityName} local time`);
       }
       
 
