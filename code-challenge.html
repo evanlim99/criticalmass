@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <title>Critical Mass Code Challenge - Evan Lim</title>
 
-
+    <!-- NOTE: There wasn't a mobile design in the zip file so I made a simple
+       vertical design for mobile
+    -->
     <style type="text/css">
       body {
         background-color: #FFF;
@@ -22,22 +24,42 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
-        margin-top: 130px;
+        margin-top: 30px;
+      }
+
+      @media screen and (min-width: 768px) {
+        #navbar {
+          margin-top: 130px;
+        }
       }
 
       #navbar ul {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: space-between;
-        margin: 0 60px 0;
+        margin: 0;
         padding: 0;
+      }
+
+      @media screen and (min-width: 768px) {
+        #navbar ul {
+          flex-direction: row;
+          margin: 0 60px 0;
+        }
       }
 
       #navbar li {
         list-style-type: none;
         margin: 0 10px;
-        padding: 0 0 7px;
-        text-align: center;
+        padding: 3px 0;
+        text-align: left;
+      }
+
+      @media screen and (min-width: 768px) {
+        #navbar li {
+          padding: 0 0 7px;
+          text-align: center;
+        }
       }
 
       #navbar li a {
@@ -62,31 +84,79 @@
       }
 
       .city-navigation {
-        border-bottom: 1px solid #D3D3D3;
+        border-left: 1px solid #D3D3D3;
+        margin-left: 59px;
         position: relative;
+      }
+
+      @media screen and (min-width: 768px) {
+        .city-navigation {
+          border-bottom: 1px solid #D3D3D3;
+          border-left: none;
+          margin-left: 0;
+        }
       }
 
       #slider {
         display: none;
-        margin: -1px 0 0;
+        position: absolute;
+        top: 0;
         transition: transform 200ms;
         width: 0;
       }
 
+      @media screen and (min-width: 768px) {
+        #slider {
+          margin: -1px 0 0;
+          position: relative;
+        }
+      }
+
       #slider hr {
-        border-top: 1px solid #000;
+        border-left: 1px solid #000;
+        height: 100%;
         margin: 0;
         padding: 0;
+        width: 0;
+      }
+
+      @media screen and (min-width: 768px) {
+        #slider hr {
+          border-left: none;
+          border-top: 1px solid #000;
+          height: 0;
+          width: auto;
+        }
+      }
+
+      #slider-wrapper {
+        align-items: center;
+        display: flex;
+        flex-direction: row-reverse;
+        height: 100%;
+        width: 60px;
+      }
+
+      @media screen and (min-width: 768px) {
+        #slider-wrapper {
+          display: block;
+          width: auto;
+        }
       }
 
       .city-time {
         color: #8B8B8B;
         font-size: 0.72rem;
-        margin-left: -25%;
-        padding-top: 10px;
         text-align: center;
         transition: all 200ms;
         width: 150%;
+      }
+
+      @media screen and (min-width: 768px) {
+        .city-time {
+          margin-left: -25%;
+          padding-top: 10px;
+        }
       }
     </style>
 
@@ -96,8 +166,10 @@
       <div id="navbar">
         <div id="city-navigation-wrapper">
           <div id="slider">
-            <hr>
-            <div class="city-time" aria-label="" aria-live="polite"></div>
+            <div id="slider-wrapper">
+              <hr>
+              <div class="city-time" aria-label="" aria-live="polite"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -106,6 +178,9 @@
 
     <script>
     
+      /* NOTE: I added timezone offset to the JSON, I couldn't find a library that could get this info from the
+         city name. I also thought in real life the timezone might be the type of info that's provided in JSON
+      */
       const cities = [
         {
           "section": "cupertino",
@@ -172,7 +247,11 @@
 
         // Show slider, update position and time
         navSlider.style.display = 'block';
-        moveSlider(this.offsetWidth, this.offsetLeft);
+        if ( window.innerWidth < 768 ) 
+          moveSliderVertical(this.offsetHeight, this.offsetTop);      // Mobile
+        else
+          moveSliderHorizontal(this.offsetWidth, this.offsetLeft);    // Tablet and desktop
+        
         showTime(this.firstChild.dataset.utc, this.firstChild.dataset.city);
       }
       
@@ -183,22 +262,38 @@
 
       const navSlider = document.querySelector('#slider');
 
-      // Initially position slider in middle so it appears to slide out from middle
-      let containerMiddle = container.offsetWidth/2;
-      navSlider.style.transform = `translateX(${containerMiddle}px)`;
+      /* Initially position slider in the middle. I thought it would look
+         better sliding out from the middle rather than from left or right
+      */
+      if ( window.innerWidth >= 768 ) {
+        let containerMiddle = container.offsetWidth/2;
+        navSlider.style.transform = `translateX(${containerMiddle}px)`;
+      }
 
-      function moveSlider(width, offset) {
+      // Mobile
+      function moveSliderHorizontal(width, offset) {
         navSlider.style.width = `${width}px`;
         navSlider.style.transform = `translateX(${offset}px)`;
       }
 
+      // Tablet and desktop
+      function moveSliderVertical(height, offset) {
+        navSlider.style.height = `${height}px`;
+        navSlider.style.transform = `translateY(${offset}px)`;
+      }
+
       // Move slider on window resize
       function windowResizeUpdate() {
+        navSlider.style.display = 'none';     // Hide slider so that it doesn't fly around
         for ( let i = 0; i < navLink.length; i++ ) {
           if ( navLink[i].classList.contains('selected') ) {
-            moveSlider(navLink[i].offsetWidth, navLink[i].offsetLeft);
+            if ( window.innerWidth < 768 ) 
+              moveSliderVertical(navLink[i].offsetHeight, navLink[i].offsetTop);    // Mobile
+            else
+              moveSliderHorizontal(navLink[i].offsetWidth, navLink[i].offsetLeft);  // Tablet and desktop
           }
         }
+        navSlider.style.display = 'block';
       }
 
       window.onresize = windowResizeUpdate;
